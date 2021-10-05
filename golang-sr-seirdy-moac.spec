@@ -10,7 +10,9 @@ Version:                2.0.1
 %global archivename     %{repo}-%{version}
 %global archiveext      tar.gz
 %global archiveurl      %{forgeurl}/archive/%{tag}.%{archiveext}
-%global topdir          %{repo}-%{version}
+%global topdir          %{repo}-%{tag}
+%global extractdir      %{repo}-%{tag}
+%global scm             git
 
 %gometa
 
@@ -56,10 +58,10 @@ done
 
 %install
 %gopkginstall
-install -m 0755 -vd                     %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 export PREFIX=%{_prefix}
 %make_install
+install -m 0755 -vd                     %{buildroot}%{_bindir}
+install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 
 %if %{with check}
 %check
