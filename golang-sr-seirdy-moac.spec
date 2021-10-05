@@ -4,8 +4,8 @@
 # https://git.sr.ht/~seirdy/moac
 %global goipath         git.sr.ht/~seirdy/moac
 %global forgeurl        https://git.sr.ht/~seirdy/moac
-Version:                2.0.1
-%global tag             v2.0.1
+Version:                2.0.2
+%global tag             v2.0.2
 %global repo            moac
 %global archivename     %{repo}-%{version}
 %global archiveext      tar.gz
@@ -59,13 +59,13 @@ done
 %install
 %gopkginstall
 export PREFIX=%{_prefix}
-%make_install
+%make_install INSTALL_ALL='install-man install-completion'
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 
 %if %{with check}
 %check
-%gocheck
+%gocheck -t cmd # tests version output is correct, but rpm makes it empty
 %endif
 
 %files
@@ -82,6 +82,6 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %gopkgfiles
 
 %changelog
-* Mon Oct 04 2021 Rohan Kumar <seirdy@seirdy.one> - 2.0.1-1%{?dist}
+* Mon Oct 04 2021 Rohan Kumar <seirdy@seirdy.one> - 2.0.2-1%{?dist}
 - Initial package
 
