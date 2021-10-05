@@ -37,7 +37,7 @@ BuildRequires:  golang(golang.org/x/term)
 
 %if %{with check}
 # Tests
-BuildRequires: golang(github.com/rogpeppe/go-internal)
+BuildRequires: golang(github.com/rogpeppe/go-internal/testscript)
 %endif
 
 %description
