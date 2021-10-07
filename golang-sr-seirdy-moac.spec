@@ -2,14 +2,15 @@
 %bcond_without check
 
 # https://git.sr.ht/~seirdy/moac
+%global public_key      RWRj8vIX4e/JRFEf37f0inMQrKuqhJifVb/O7KifPglNttKNcoFqeElo
 %global goipath         git.sr.ht/~seirdy/moac
 %global forgeurl        https://git.sr.ht/~seirdy/moac
 Version:                2.0.2
 %global tag             v2.0.2
 %global repo            moac
-%global archivename     %{repo}-%{version}
+%global archivename     %{repo}-%{tag}
 %global archiveext      tar.gz
-%global archiveurl      %{forgeurl}/archive/%{tag}.%{archiveext}
+%global archiveurl      %{forgeurl}/refs/download/%{tag}/%{repo}-%{tag}.%{archiveext}
 %global topdir          %{repo}-%{tag}
 %global extractdir      %{repo}-%{tag}
 %global scm             git
@@ -30,10 +31,12 @@ Summary:        Analyze and generate passwords using physical limits of computat
 
 # Upstream license specification: MPL-2.0
 License:        MPLv2.0
-URL:            https://sr.ht/~seirdy/MOAC
+URL:            https://sr.ht/~seirdy/MOAC/
 Source0:        %{gosource}
+Source1:        %{archiveurl}.minisig
 
 BuildRequires:  scdoc
+BuildRequires:  minisign
 BuildRequires:  golang(git.sr.ht/~sircmpwn/getopt)
 BuildRequires:  golang(golang.org/x/term)
 
@@ -48,10 +51,10 @@ BuildRequires: golang(github.com/rogpeppe/go-internal/testscript)
 %gopkg
 
 %prep
+/usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
 %goprep
 
 %build
-export LDFLAGS="-X git.sr.ht/~seirdy/moac/v2/internal/cli.version=%{version}"
 for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
@@ -65,7 +68,7 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 
 %if %{with check}
 %check
-%gocheck -t cmd # tests version output is correct, but rpm makes it empty
+%gocheck -t cmd
 %endif
 
 %files
@@ -75,6 +78,7 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %{_bindir}/moac-pwgen
 %{_mandir}/man1/moac.1*
 %{_mandir}/man1/moac-pwgen.1*
+%dir %{_datadir}/zsh
 %dir %{_datadir}/zsh/site-functions
 %{_datadir}/zsh/site-functions/_moac
 %{_datadir}/zsh/site-functions/_moac-pwgen
